@@ -3,10 +3,7 @@ package ru.skypro.homework.entity;
 import lombok.Data;
 import ru.skypro.homework.dto.Role;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity(name = "users")
@@ -20,5 +17,6 @@ public class User {
     private String lastName;
     private String phone;
     private String image;
+    @Enumerated(EnumType.STRING)
     private Role role;
 }

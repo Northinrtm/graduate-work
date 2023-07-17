@@ -6,14 +6,17 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
-@Entity(name="comments")
+@Entity(name = "comments")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private String text;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ads_id")
+    private Ads ads;
 }
