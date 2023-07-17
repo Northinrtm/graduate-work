@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import ru.skypro.homework.dto.MyUserDetailsDto;
 import ru.skypro.homework.dto.Register;
+import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entity.User;
 
 @Mapper(componentModel = "spring")
@@ -16,4 +17,8 @@ public interface UserMapper {
     User toUser(Register register);
 
     MyUserDetailsDto toMyUserDetailsDto(User user);
+
+    UserDto toUserDto(User user);
+
+    User toUserFromUserDto(UserDto userDto);
 }
