@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -21,10 +20,9 @@ public class ImageService {
     @Value("${image.dir.path}")
     private String imageDir;
 
-    public String saveImage(MultipartFile image) {
+    public String saveImage(MultipartFile image, String name) {
 
-        String filename = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(image.getOriginalFilename());
-
+        String filename = name + "." + StringUtils.getFilenameExtension(image.getOriginalFilename());
         Path filePath = Paths.get(imageDir).resolve(filename);
 
         try {
@@ -38,6 +36,8 @@ public class ImageService {
     }
 
     public byte[] getImage(String path) throws IOException {
-        return Files.readAllBytes(Path.of(path));
+        String fullPath = imageDir + path;
+        System.out.println(fullPath);
+        return Files.readAllBytes(Path.of(fullPath));
     }
 }

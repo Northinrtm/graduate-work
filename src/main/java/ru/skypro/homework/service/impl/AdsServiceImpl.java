@@ -54,7 +54,8 @@ public class AdsServiceImpl implements AdsService {
         Ads ads = AdsMapper.INSTANCE.toAdsFromCreateAds(createAds);
         ads.setUser(userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserWithEmailNotFoundException(email)));
-        ads.setImage(imageService.saveImage(image));
+        String name = "ad" + ads.getId();
+        ads.setImage(imageService.saveImage(image,name));
         adsRepository.save(ads);
         return AdsMapper.INSTANCE.toAdsDto(ads);
     }
@@ -125,7 +126,7 @@ public class AdsServiceImpl implements AdsService {
     public void updateAdsImage(Integer id, MultipartFile image) {
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads not found"));
-        ads.setImage(imageService.saveImage(image));
+        ads.setImage(imageService.saveImage(image,"qweqeqew"));
         adsRepository.save(ads);
     }
 }

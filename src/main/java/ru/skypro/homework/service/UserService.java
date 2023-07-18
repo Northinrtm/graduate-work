@@ -18,5 +18,5 @@ public interface UserService {
 
     void updateAvatar(MultipartFile image, String email) throws IOException;
 
-    byte[] getImage(String email) throws IOException;
+    byte[] getImage(String name) throws IOException;
 }
