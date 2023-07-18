@@ -14,6 +14,7 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Slf4j
@@ -61,5 +62,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserWithEmailNotFoundException(email));
         user.setImage(imageService.saveImage(image));
         userRepository.save(user);
+    }
+
+    @Override
+    public byte[] getImage(String email) throws IOException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()->new UserWithEmailNotFoundException(email));
+        return imageService.getImage(user.getImage());
     }
 }

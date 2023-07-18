@@ -48,4 +48,9 @@ public class UserController {
         userService.updateAvatar(image, authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @GetMapping(value = "/me/image",produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] getImages(Authentication authentication) throws IOException{
+        return userService.getImage(authentication.getName());
+    }
 }
