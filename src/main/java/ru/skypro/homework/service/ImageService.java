@@ -36,4 +36,8 @@ public class ImageService {
 
         return filePath.toString();
     }
+
+    public byte[] getImage(String path) throws IOException {
+        return Files.readAllBytes(Path.of(path));
+    }
 }
