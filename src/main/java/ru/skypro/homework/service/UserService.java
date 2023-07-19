@@ -14,7 +14,7 @@ public interface UserService {
 
     UserDto updateUser(UserDto userDto, String email);
 
-    void updateAvatar(MultipartFile image, String email) throws IOException;
+    void updateAvatar(MultipartFile image, String email);
 
     byte[] getImage(String name) throws IOException;
 }

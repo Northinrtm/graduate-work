@@ -14,6 +14,7 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -59,12 +60,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateAvatar(MultipartFile image, String email) throws IOException {
+    public void updateAvatar(MultipartFile image, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserWithEmailNotFoundException(email));
-        String name = "user" + user.getId();
-        String path = imageService.saveImage(image, name);
-        user.setImage(path);
+        imageService.deleteFileIfNotNull(user.getImage());
+        user.setImage(imageService.saveImage(image));
         userRepository.save(user);
     }
 
