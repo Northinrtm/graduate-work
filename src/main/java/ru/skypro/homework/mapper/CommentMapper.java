@@ -20,6 +20,7 @@ public interface CommentMapper {
     @Mapping(target = "author", source = "user.id")
     @Mapping(target = "authorImage", source = "user.image")
     @Mapping(target = "authorFirstName", source = "user.firstName")
+    @Mapping(target = "pk", source = "id")
     CommentDto toCommentDtoFromComment(Comment comment);
 
     @Mapping(target = "user.id", ignore = true)
