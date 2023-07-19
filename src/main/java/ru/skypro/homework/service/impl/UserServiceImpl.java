@@ -8,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entity.User;
-import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.exception.UserWithEmailNotFoundException;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
@@ -16,6 +15,8 @@ import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 @Slf4j
@@ -58,12 +59,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateAvatar(MultipartFile image, String email) {
+    public void updateAvatar(MultipartFile image, String email) throws IOException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserWithEmailNotFoundException(email));
         String name = "user" + user.getId();
-        imageService.saveImage(image,name);
-        user.setImage("/users/image/" + name);
+        String path = imageService.saveImage(image, name);
+        user.setImage(path);
         userRepository.save(user);
     }
 

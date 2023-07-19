@@ -3,6 +3,8 @@ package ru.skypro.homework.service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 
+import java.io.IOException;
+
 public interface AdsService {
 
     ResponseWrapperAds getAllAds();
@@ -26,4 +28,6 @@ public interface AdsService {
     CommentDto updateComment(Integer adId, Integer id, CommentDto commentDto);
 
     void updateAdsImage(Integer id, MultipartFile image);
+
+    byte[] getImage(String name) throws IOException;
 }
