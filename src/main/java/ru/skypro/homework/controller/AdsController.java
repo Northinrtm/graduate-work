@@ -47,7 +47,7 @@ public class AdsController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeAd(@PathVariable Integer id) {
         adsService.removeAd(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/{id}")
@@ -78,8 +78,8 @@ public class AdsController {
     @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable Integer adId,
                                                     @PathVariable Integer commentId,
-                                                    @RequestBody CommentDto commentDto) {
-        return ResponseEntity.ok(adsService.updateComment(adId, commentId, commentDto));
+                                                    @RequestBody CreateComment createComment) {
+        return ResponseEntity.ok(adsService.updateComment(adId, commentId, createComment));
     }
 
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -88,7 +88,7 @@ public class AdsController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/image/{name}",produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/image/{name}", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] getImages(@PathVariable String name) throws IOException {
         return adsService.getImage(name);
     }

@@ -17,6 +17,7 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImageService;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,11 +30,13 @@ public class AdsServiceImpl implements AdsService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final ImageService imageService;
+    private final AdsMapper adsMapper;
+    private final CommentMapper commentMapper;
 
     @Override
     public ResponseWrapperAds getAllAds() {
         List<Ads> adsList = adsRepository.findAll();
-        List<AdsDto> adsDtoList = AdsMapper.INSTANCE.toDtos(adsList);
+        List<AdsDto> adsDtoList = adsMapper.toDtos(adsList);
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setCount(adsList.size());
         responseWrapperAds.setResults(adsDtoList);
@@ -43,7 +46,7 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public ResponseWrapperAds getAdsMe(String email) {
         List<Ads> adsList = adsRepository.findByUser(userRepository.findByEmail(email).get());
-        List<AdsDto> adsDtoList = AdsMapper.INSTANCE.toDtos(adsList);
+        List<AdsDto> adsDtoList = adsMapper.toDtos(adsList);
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setResults(adsDtoList);
         responseWrapperAds.setCount(adsList.size());
@@ -52,26 +55,29 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public AdsDto addAd(CreateAds createAds, String email, MultipartFile image) {
-        Ads ads = AdsMapper.INSTANCE.toAdsFromCreateAds(createAds);
+        Ads ads = adsMapper.toAdsFromCreateAds(createAds);
         ads.setUser(userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserWithEmailNotFoundException(email)));
         String name = "ad" + ads.getId();
-        ads.setImage(imageService.saveImage(image));
+        ads.setImage(imageService.saveImage(image,"/ads"));
         adsRepository.save(ads);
-        return AdsMapper.INSTANCE.toAdsDto(ads);
+        return adsMapper.toAdsDto(ads);
     }
 
     @Override
     public FullAds getAds(Integer id) {
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads not found by id: " + id));
-        return AdsMapper.INSTANCE.toFullAds(ads);
+        return adsMapper.toFullAds(ads);
     }
 
+    @Transactional
     @Override
     public void removeAd(Integer id) {
+        commentRepository.deleteAllByAds_Id(id);
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads not found by id: " + id));
+        imageService.deleteFileIfNotNull(ads.getImage());
         adsRepository.delete(ads);
     }
 
@@ -79,17 +85,15 @@ public class AdsServiceImpl implements AdsService {
     public AdsDto updateAds(CreateAds createAds, Integer id) {
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads not found by id: " + id));
-        System.out.println(ads);
-        AdsMapper.INSTANCE.updateAds(createAds, ads);
-        System.out.println(ads);
+        adsMapper.updateAds(createAds, ads);
         adsRepository.save(ads);
-        return AdsMapper.INSTANCE.toAdsDto(ads);
+        return adsMapper.toAdsDto(ads);
     }
 
     @Override
     public ResponseWrapperComment getComments(Integer id) {
         List<Comment> commentList = commentRepository.findAllByAdsId(id);
-        List<CommentDto> commentDtos = CommentMapper.INSTANCE.toListDto(commentList);
+        List<CommentDto> commentDtos = commentMapper.toListDto(commentList);
         ResponseWrapperComment responseWrapperComment = new ResponseWrapperComment();
         responseWrapperComment.setResults(commentDtos);
         responseWrapperComment.setCount(commentDtos.size());
@@ -99,28 +103,28 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public CommentDto addComment(Integer id, CreateComment createComment, String email) {
         Ads ads = adsRepository.findById(id).get();
-        Comment comment = CommentMapper.INSTANCE.toCommentFromCreateComment(createComment);
+        Comment comment = commentMapper.toCommentFromCreateComment(createComment);
         System.out.println(ads);
         comment.setAds(ads);
         comment.setCreatedAt(LocalDateTime.now());
         comment.setUser(userRepository.findByEmail(email).get());
         commentRepository.save(comment);
         System.out.println(comment);
-        return CommentMapper.INSTANCE.toCommentDtoFromComment(comment);
+        return commentMapper.toCommentDtoFromComment(comment);
     }
 
     @Override
     public void deleteComment(Integer adId, Integer id) {
-        commentRepository.deleteByIdAndAds_Id(id, adId);
+        commentRepository.deleteByAdsIdAndId(adId, id);
     }
 
     @Override
-    public CommentDto updateComment(Integer adId, Integer id, CommentDto commentDto) {
+    public CommentDto updateComment(Integer adId, Integer id, CreateComment createComment) {
         Comment comment = commentRepository.findCommentByIdAndAds_Id(id, adId)
                 .orElseThrow(() -> new CommentNotFoundException("Comment not found"));
-        comment.setText(commentDto.getText());
+        comment.setText(createComment.getText());
         commentRepository.save(comment);
-        return CommentMapper.INSTANCE.toCommentDtoFromComment(comment);
+        return commentMapper.toCommentDtoFromComment(comment);
     }
 
     @Override
@@ -128,7 +132,7 @@ public class AdsServiceImpl implements AdsService {
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads not found"));
         imageService.deleteFileIfNotNull(ads.getImage());
-        ads.setImage(imageService.saveImage(image));
+        ads.setImage(imageService.saveImage(image,"/ads"));
         adsRepository.save(ads);
     }
 

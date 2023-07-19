@@ -3,7 +3,6 @@ package ru.skypro.homework.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateAds;
 import ru.skypro.homework.dto.FullAds;
@@ -14,8 +13,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AdsMapper {
 
-    AdsMapper INSTANCE = Mappers.getMapper(AdsMapper.class);
-
     Ads toAdsFromCreateAds(CreateAds createAds);
 
     @Mapping(target = "author", source = "user.id")
@@ -25,6 +22,10 @@ public interface AdsMapper {
     List<AdsDto> toDtos(List<Ads> adsList);
 
     @Mapping(target = "pk", source = "id")
+    @Mapping(target = "authorFirstName",source = "user.firstName")
+    @Mapping(target = "authorLastName",source = "user.lastName")
+    @Mapping(target = "email",source = "user.email")
+    @Mapping(target = "phone",source = "user.phone")
     FullAds toFullAds(Ads ads);
 
     void updateAds(CreateAds createAds, @MappingTarget Ads ads);

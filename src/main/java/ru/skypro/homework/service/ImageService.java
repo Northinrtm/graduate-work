@@ -25,7 +25,7 @@ public class ImageService {
     @Value("${image.dir.path}")
     private String imageDir;
 
-    public String saveImage(MultipartFile image) {
+    public String saveImage(MultipartFile image, String name) {
 
         String extension = StringUtils.getFilenameExtension(image.getOriginalFilename());
         String filename = UUID.randomUUID() + "." + extension;
@@ -36,7 +36,7 @@ public class ImageService {
             log.error("Error writing file: {}", e.getMessage());
             throw new RuntimeException("Error writing file", e);
         }
-        return "/users/image/" + filename;
+        return name + "/image/" + filename;
     }
 
     public byte[] getImage(String name) throws IOException {
@@ -47,7 +47,11 @@ public class ImageService {
         }
         return null;
     }
+
     public void deleteFileIfNotNull(String path) {
+        if (path == null) {
+            return;
+        }
         String fileName = path.substring(path.lastIndexOf('/'));
         File fileToDelete = new File(imageDir + fileName);
         System.out.println(imageDir + fileName);

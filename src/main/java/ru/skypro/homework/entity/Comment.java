@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private LocalDateTime createdAt;
     private String text;
     @ManyToOne(fetch = FetchType.LAZY)
