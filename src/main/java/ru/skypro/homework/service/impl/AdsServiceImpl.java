@@ -113,7 +113,9 @@ public class AdsServiceImpl implements AdsService {
         return commentMapper.toCommentDtoFromComment(comment);
     }
 
+
     @Override
+    @Transactional
     public void deleteComment(Integer adId, Integer id) {
         commentRepository.deleteByAdsIdAndId(adId, id);
     }
