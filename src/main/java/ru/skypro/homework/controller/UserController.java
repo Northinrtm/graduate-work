@@ -24,11 +24,8 @@ public class UserController {
     @PostMapping("/set_password")
     public ResponseEntity<NewPassword> setPassword(@RequestBody NewPassword newPassword,
                                                    Authentication authentication) {
-        if (userService.setPassword(newPassword, authentication.getName())) {
-            return ResponseEntity.ok(newPassword);
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        userService.setPassword(newPassword, authentication.getName());
+        return ResponseEntity.ok(newPassword);
     }
 
     @GetMapping("/me")
@@ -49,8 +46,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping(value = "/image/{name}",produces = {MediaType.IMAGE_PNG_VALUE})
-    public byte[] getImages(@PathVariable String name) throws IOException{
+    @GetMapping(value = "/image/{name}", produces = {MediaType.IMAGE_PNG_VALUE})
+    public byte[] getImages(@PathVariable String name) throws IOException {
         return userService.getImage(name);
     }
 }

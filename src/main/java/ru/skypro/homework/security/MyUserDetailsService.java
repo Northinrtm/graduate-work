@@ -16,11 +16,12 @@ public class MyUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final MyUserDetails myUserDetails;
+    private final UserMapper userMapper;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         MyUserDetailsDto myUserDetailsDto = userRepository.findByEmail(email)
-                .map(u -> UserMapper.INSTANCE.toMyUserDetailsDto(u))
+                .map(u -> userMapper.toMyUserDetailsDto(u))
                 .orElseThrow(() -> new UserWithEmailNotFoundException(email));
         myUserDetails.setMyUserDetailsDto(myUserDetailsDto);
         return myUserDetails;

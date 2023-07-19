@@ -25,7 +25,7 @@ public interface AdsService {
 
     void deleteComment(Integer adId, Integer id);
 
-    CommentDto updateComment(Integer adId, Integer id, CommentDto commentDto);
+    CommentDto updateComment(Integer adId, Integer id, CreateComment createComment);
 
     void updateAdsImage(Integer id, MultipartFile image);
 
