@@ -49,7 +49,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping(value = "/me/image/{name}",produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/image/{name}",produces = {MediaType.IMAGE_PNG_VALUE})
     public byte[] getImages(@PathVariable String name) throws IOException{
         return userService.getImage(name);
     }

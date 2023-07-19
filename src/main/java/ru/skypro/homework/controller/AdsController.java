@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdsService;
 
+import java.io.IOException;
+
 @Slf4j
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -66,14 +68,14 @@ public class AdsController {
         return ResponseEntity.ok(adsService.addComment(id, createComment, authentication.getName()));
     }
 
-    @DeleteMapping("/ads/{adId}/comments/{commentId}")
+    @DeleteMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable Integer adId,
                                            @PathVariable Integer commentId) {
         adsService.deleteComment(adId, commentId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PatchMapping("/ads/{adId}/comments/{commentId}")
+    @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable Integer adId,
                                                     @PathVariable Integer commentId,
                                                     @RequestBody CommentDto commentDto) {
@@ -84,5 +86,10 @@ public class AdsController {
     public ResponseEntity<?> updateAdsImage(@PathVariable Integer id, @RequestParam MultipartFile image) {
         adsService.updateAdsImage(id, image);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/image/{name}",produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] getImages(@PathVariable String name) throws IOException {
+        return adsService.getImage(name);
     }
 }

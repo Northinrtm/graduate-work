@@ -17,6 +17,7 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImageService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -126,7 +127,14 @@ public class AdsServiceImpl implements AdsService {
     public void updateAdsImage(Integer id, MultipartFile image) {
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads not found"));
-        ads.setImage(imageService.saveImage(image,"qweqeqew"));
+        String name = "ad" + ads.getId();
+        imageService.saveImage(image,name);
+        ads.setImage("/image/" + name);
         adsRepository.save(ads);
+    }
+
+    @Override
+    public byte[] getImage(String name) throws IOException {
+        return imageService.getImage(name);
     }
 }
