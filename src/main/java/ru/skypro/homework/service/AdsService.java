@@ -30,4 +30,6 @@ public interface AdsService {
     void updateAdsImage(Integer id, MultipartFile image);
 
     byte[] getImage(String name) throws IOException;
+
+    CommentDto getCommentDto(Integer adId,Integer id);
 }

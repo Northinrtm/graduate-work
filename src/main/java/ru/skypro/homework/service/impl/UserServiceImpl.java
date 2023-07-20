@@ -28,6 +28,17 @@ public class UserServiceImpl implements UserService {
     private final ImageService imageService;
     private final UserMapper userMapper;
 
+    /**
+     * Устанавливает новый пароль пользователю.
+     * Использует методы:
+     * {@link UserRepository#findByEmail(String)},
+     * {@link PasswordEncoder#matches(CharSequence, String)},
+     * {@link UserRepository#save(Object)}.
+     *
+     * @param newPassword Объект NewPassword с данными для установки нового пароля.
+     * @param email       Адрес электронной почты пользователя.
+     * @return true, если пароль успешно обновлен, иначе false (если указан неверный текущий пароль).
+     */
     @Override
     public boolean setPassword(NewPassword newPassword, String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
@@ -44,6 +55,17 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    /**
+     * Получает объект UserDto по адресу электронной почты пользователя.
+     * Использует методы:
+     * {@link UserRepository#findByEmail(String)},
+     * {@link UserWithEmailNotFoundException(String)},
+     * {@link UserMapper#toUserDto(User)}.
+     *
+     * @param email Адрес электронной почты пользователя.
+     * @return Объект UserDto с данными пользователя.
+     * @throws UserWithEmailNotFoundException Если пользователь с указанным адресом электронной почты не найден.
+     */
     @Override
     public UserDto getUser(String email) {
         User user = userRepository.findByEmail(email)
@@ -51,6 +73,19 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserDto(user);
     }
 
+    /**
+     * Обновляет данные пользователя.
+     * Использует методы:
+     * {@link UserRepository#findByEmail(String)},
+     * {@link UserNotFoundException(String)},
+     * {@link UserMapper#updateUserFromUserDto(UserDto, User)},
+     * {@link UserRepository#save(Object)}.
+     *
+     * @param userDto Объект UserDto с обновленными данными пользователя.
+     * @param email   Адрес электронной почты пользователя.
+     * @return Объект UserDto с обновленными данными пользователя.
+     * @throws UserNotFoundException Если пользователь с указанным адресом электронной почты не найден.
+     */
     @Override
     public UserDto updateUser(UserDto userDto, String email) {
         User user = userRepository.findByEmail(email)
@@ -61,6 +96,19 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserDto(user);
     }
 
+    /**
+     * Обновляет аватар пользователя.
+     * Использует методы:
+     * {@link UserRepository#findByEmail(String)},
+     * {@link UserWithEmailNotFoundException(String)},
+     * {@link ImageService#deleteFileIfNotNull(String)},
+     * {@link ImageService#saveImage(MultipartFile, String)},
+     * {@link UserRepository#save(Object)}.
+     *
+     * @param image Объект MultipartFile с новым аватаром пользователя.
+     * @param email Адрес электронной почты пользователя.
+     * @throws UserWithEmailNotFoundException Если пользователь с указанным адресом электронной почты не найден.
+     */
     @Override
     public void updateAvatar(MultipartFile image, String email) {
         User user = userRepository.findByEmail(email)
@@ -71,6 +119,14 @@ public class UserServiceImpl implements UserService {
         log.trace("Avatar updated");
     }
 
+    /**
+     * Получает изображение по его имени.
+     * Использует метод {@link ImageService#getImage(String)} для получения изображения по имени.
+     *
+     * @param name Имя изображения, которое нужно получить.
+     * @return Массив байтов, представляющий изображение.
+     * @throws IOException Если произошла ошибка при получении изображения.
+     */
     @Override
     public byte[] getImage(String name) throws IOException {
         return imageService.getImage(name);
