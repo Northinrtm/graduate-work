@@ -1,6 +1,7 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Register;
@@ -12,6 +13,7 @@ import ru.skypro.homework.service.AuthService;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -24,9 +26,10 @@ public class AuthServiceImpl implements AuthService {
     public boolean login(String userName, String password) {
         Optional<User> optionalUser = userRepository.findByEmail(userName);
         if (optionalUser.isEmpty()) {
+            log.debug("User not found");
             return false;
         }
-        return encoder.matches(password,optionalUser.get().getPassword());
+        return encoder.matches(password, optionalUser.get().getPassword());
     }
 
     @Override
@@ -39,6 +42,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(encoder.encode(user.getPassword()));
         user.setRole(role);
         userRepository.save(user);
+        log.debug("Registered a new user");
         return true;
     }
 }

@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
             if (encoder.matches(newPassword.getCurrentPassword(), user.getPassword())) {
                 user.setPassword(encoder.encode(newPassword.getNewPassword()));
                 userRepository.save(user);
-                log.trace("Update password");
+                log.trace("Updated password");
                 return true;
             }
         }
@@ -46,7 +46,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUser(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserWithEmailNotFoundException(email));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserWithEmailNotFoundException(email));
         return userMapper.toUserDto(user);
     }
 
@@ -67,6 +68,7 @@ public class UserServiceImpl implements UserService {
         imageService.deleteFileIfNotNull(user.getImage());
         user.setImage(imageService.saveImage(image, "/users"));
         userRepository.save(user);
+        log.trace("Avatar updated");
     }
 
     @Override

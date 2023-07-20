@@ -71,7 +71,7 @@ public class AdsController {
     @DeleteMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable Integer adId, @PathVariable Integer commentId) {
         adsService.deleteComment(adId, commentId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/{adId}/comments/{commentId}")
@@ -84,7 +84,7 @@ public class AdsController {
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateAdsImage(@PathVariable Integer id, @RequestParam MultipartFile image) {
         adsService.updateAdsImage(id, image);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(value = "/image/{name}", produces = MediaType.IMAGE_PNG_VALUE)

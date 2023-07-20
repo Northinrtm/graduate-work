@@ -41,9 +41,9 @@ public class UserController {
 
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUserImage(@RequestParam MultipartFile image,
-                                             Authentication authentication) throws IOException {
+                                             Authentication authentication) {
         userService.updateAvatar(image, authentication.getName());
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(value = "/image/{name}", produces = {MediaType.IMAGE_PNG_VALUE})
