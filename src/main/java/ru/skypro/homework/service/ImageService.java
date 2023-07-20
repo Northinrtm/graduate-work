@@ -36,6 +36,7 @@ public class ImageService {
             log.error("Error writing file: {}", e.getMessage());
             throw new RuntimeException("Error writing file", e);
         }
+        log.trace("Loaded file, name: ", filename);
         return name + "/image/" + filename;
     }
 
@@ -54,16 +55,14 @@ public class ImageService {
         }
         String fileName = path.substring(path.lastIndexOf('/'));
         File fileToDelete = new File(imageDir + fileName);
-        System.out.println(imageDir + fileName);
-        System.out.println(fileToDelete.exists());
         if (fileToDelete.exists()) {
             if (fileToDelete.delete()) {
-                log.info("File successfully deleted");
+                log.trace("File successfully deleted");
             } else {
-                log.info("Failed to delete file");
+                log.trace("Failed to delete file");
             }
         } else {
-            log.info("File not found");
+            log.trace("File not found");
         }
     }
 }

@@ -1,6 +1,7 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdsServiceImpl implements AdsService {
@@ -45,7 +47,8 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public ResponseWrapperAds getAdsMe(String email) {
-        List<Ads> adsList = adsRepository.findByUser(userRepository.findByEmail(email).get());
+        List<Ads> adsList = adsRepository.findByUser(userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserWithEmailNotFoundException(email)));
         List<AdsDto> adsDtoList = adsMapper.toDtos(adsList);
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setResults(adsDtoList);
@@ -58,8 +61,7 @@ public class AdsServiceImpl implements AdsService {
         Ads ads = adsMapper.toAdsFromCreateAds(createAds);
         ads.setUser(userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserWithEmailNotFoundException(email)));
-        String name = "ad" + ads.getId();
-        ads.setImage(imageService.saveImage(image,"/ads"));
+        ads.setImage(imageService.saveImage(image, "/ads"));
         adsRepository.save(ads);
         return adsMapper.toAdsDto(ads);
     }
@@ -78,6 +80,7 @@ public class AdsServiceImpl implements AdsService {
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads not found by id: " + id));
         imageService.deleteFileIfNotNull(ads.getImage());
+        log.trace("Removed Ads with id: ", id);
         adsRepository.delete(ads);
     }
 
@@ -87,6 +90,7 @@ public class AdsServiceImpl implements AdsService {
                 .orElseThrow(() -> new AdsNotFoundException("Ads not found by id: " + id));
         adsMapper.updateAds(createAds, ads);
         adsRepository.save(ads);
+        log.trace("Updated Ads with id: ", id);
         return adsMapper.toAdsDto(ads);
     }
 
@@ -102,14 +106,14 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public CommentDto addComment(Integer id, CreateComment createComment, String email) {
-        Ads ads = adsRepository.findById(id).get();
+        Ads ads = adsRepository.findById(id)
+                .orElseThrow(() -> new AdsNotFoundException("Ads not found"));
         Comment comment = commentMapper.toCommentFromCreateComment(createComment);
-        System.out.println(ads);
         comment.setAds(ads);
         comment.setCreatedAt(LocalDateTime.now());
         comment.setUser(userRepository.findByEmail(email).get());
         commentRepository.save(comment);
-        System.out.println(comment);
+        log.trace("Added comment with id: ", comment.getId());
         return commentMapper.toCommentDtoFromComment(comment);
     }
 
@@ -118,6 +122,7 @@ public class AdsServiceImpl implements AdsService {
     @Transactional
     public void deleteComment(Integer adId, Integer id) {
         commentRepository.deleteByAdsIdAndId(adId, id);
+        log.trace("Deleted comment with id: ", id);
     }
 
     @Override
@@ -126,6 +131,7 @@ public class AdsServiceImpl implements AdsService {
                 .orElseThrow(() -> new CommentNotFoundException("Comment not found"));
         comment.setText(createComment.getText());
         commentRepository.save(comment);
+        log.trace("Updated comment with id: ",id);
         return commentMapper.toCommentDtoFromComment(comment);
     }
 
@@ -134,7 +140,7 @@ public class AdsServiceImpl implements AdsService {
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads not found"));
         imageService.deleteFileIfNotNull(ads.getImage());
-        ads.setImage(imageService.saveImage(image,"/ads"));
+        ads.setImage(imageService.saveImage(image, "/ads"));
         adsRepository.save(ads);
     }
 
