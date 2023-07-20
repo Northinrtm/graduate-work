@@ -22,6 +22,16 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder encoder;
     private final UserMapper userMapper;
 
+    /**
+     * Проверяет аутентификацию пользователя.
+     * Использует методы:
+     * {@link UserRepository#findByEmail(String)},
+     * {@link PasswordEncoder#matches(CharSequence, String)}.
+     *
+     * @param userName Имя пользователя (адрес электронной почты).
+     * @param password Пароль пользователя.
+     * @return true, если пользователь аутентифицирован успешно, иначе false.
+     */
     @Override
     public boolean login(String userName, String password) {
         Optional<User> optionalUser = userRepository.findByEmail(userName);
@@ -32,6 +42,18 @@ public class AuthServiceImpl implements AuthService {
         return encoder.matches(password, optionalUser.get().getPassword());
     }
 
+    /**
+     * Регистрирует нового пользователя.
+     * Использует методы:
+     * {@link UserRepository#findByEmail(String)},
+     * {@link UserMapper#toUser(Register)},
+     * {@link PasswordEncoder#encode(CharSequence)},
+     * {@link UserRepository#save(Object)}.
+     *
+     * @param register Объект Register с данными для регистрации нового пользователя.
+     * @param role     Роль нового пользователя.
+     * @return true, если регистрация прошла успешно, иначе false (если пользователь с таким адресом электронной почты уже существует).
+     */
     @Override
     public boolean register(Register register, Role role) {
         if (userRepository.findByEmail(register.getUsername()).isPresent()) {
