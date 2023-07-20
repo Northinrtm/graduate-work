@@ -1,5 +1,9 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,6 +24,7 @@ import static ru.skypro.homework.dto.Role.USER;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "Authentication", description = "API для аутентификации и авторизации")
 public class AuthController {
 
     private final AuthService authService;
@@ -32,6 +37,11 @@ public class AuthController {
      *         или объект {@link ResponseEntity} с кодом 401 (UNAUTHORIZED) в случае неудачной аутентификации.
      * @see AuthService#login(String, String)
      */
+    @ApiOperation(value = "Аутентификация пользователя", response = ResponseEntity.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешная аутентификация"),
+            @ApiResponse(code = 401, message = "Неавторизованный доступ")
+    })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Login login) {
         if (authService.login(login.getUsername(), login.getPassword())) {
@@ -49,6 +59,11 @@ public class AuthController {
      *         или объект {@link ResponseEntity} с кодом 403 (FORBIDDEN) в случае неудачной регистрации.
      * @see AuthService#register(Register, Role)
      */
+    @ApiOperation(value = "Регистрация нового пользователя", response = ResponseEntity.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Успешная регистрация"),
+            @ApiResponse(code = 403, message = "Доступ запрещен")
+    })
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Register register) {
         Role role = register.getRole() == null ? USER : register.getRole();
