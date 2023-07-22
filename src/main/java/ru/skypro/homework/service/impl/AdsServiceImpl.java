@@ -223,14 +223,14 @@ public class AdsServiceImpl implements AdsService {
 
     /**
      * Обновляет текст комментария по идентификаторам объявления и комментария.
-     *
+     * <p>
      * Использует методы:
      * {@link CommentRepository#findCommentByIdAndAds_Id(Integer, Integer)},
      * {@link CommentRepository#save(Object)},
      * {@link CommentMapper#toCommentDtoFromComment(Comment)}.
      *
-     * @param adId         Идентификатор объявления, к которому привязан комментарий.
-     * @param id           Идентификатор комментария, который нужно обновить.
+     * @param adId          Идентификатор объявления, к которому привязан комментарий.
+     * @param id            Идентификатор комментария, который нужно обновить.
      * @param createComment Объект CreateComment с обновленными данными для комментария.
      * @return Объект CommentDto, содержащий обновленную информацию о комментарии.
      * @throws CommentNotFoundException Если комментарий с указанными идентификаторами не найден.
@@ -247,7 +247,7 @@ public class AdsServiceImpl implements AdsService {
 
     /**
      * Обновляет изображение объявления по его идентификатору.
-     *
+     * <p>
      * Использует методы:
      * {@link AdsRepository#findById(Object)},
      * {@link ImageService#deleteFileIfNotNull(String)},
@@ -269,7 +269,7 @@ public class AdsServiceImpl implements AdsService {
 
     /**
      * Получает изображение по его имени.
-     *
+     * <p>
      * Использует метод {@link ImageService#getImage(String)} для получения изображения по имени.
      *
      * @param name Имя изображения, которое нужно получить.
@@ -283,7 +283,7 @@ public class AdsServiceImpl implements AdsService {
 
     /**
      * Получает объект CommentDto по идентификаторам объявления и комментария.
-     *
+     * <p>
      * Использует методы:
      * {@link CommentRepository#findCommentByIdAndAds_Id(Integer, Integer)} и
      * {@link CommentMapper#toCommentDtoFromComment(Comment)}.
@@ -298,5 +298,11 @@ public class AdsServiceImpl implements AdsService {
         Comment comment = commentRepository.findCommentByIdAndAds_Id(id, adId)
                 .orElseThrow(() -> new CommentNotFoundException("Comment not found"));
         return commentMapper.toCommentDtoFromComment(comment);
+    }
+
+    public String getUserNameOfComment(Integer id) {
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new CommentNotFoundException("Comment not found"))
+                .getUser().getEmail();
     }
 }

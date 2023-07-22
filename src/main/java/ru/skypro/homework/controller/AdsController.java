@@ -111,7 +111,7 @@ public class AdsController {
             @ApiResponse(code = 401, message = "Неавторизованный запрос"),
             @ApiResponse(code = 403, message = "Запрещено")
     })
-    @PreAuthorize("hasRole('ADMIN') or @adsService.getAds(#id).getEmail()==authentication.principal.username")
+    @PreAuthorize("hasRole('ADMIN') or @adsServiceImpl.getAds(#id).getEmail() == authentication.principal.username")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeAd(@PathVariable Integer id) {
         adsService.removeAd(id);
@@ -134,7 +134,7 @@ public class AdsController {
             @ApiResponse(code = 403, message = "Запрещено"),
             @ApiResponse(code = 404, message = "Объявление не найдено")
     })
-    @PreAuthorize("hasRole('ADMIN') or @adsService.getAds(#id).getEmail()==authentication.principal.username")
+    @PreAuthorize("hasRole('ADMIN') or @adsServiceImpl.getAds(#id).getEmail()==authentication.principal.username")
     @PatchMapping("/{id}")
     public ResponseEntity<AdsDto> updateAds(@RequestBody CreateAds createAds,
                                             @PathVariable Integer id) {
@@ -201,7 +201,7 @@ public class AdsController {
             @ApiResponse(code = 404, message = "Объявление или комментарий не найдены")
     })
     @PreAuthorize("hasRole('ADMIN') or " +
-            "@adsService.getCommentDto(#adId,#commentId).getAuthor().getEmail()==authentication.principal.username")
+            "@adsServiceImpl.getUserNameOfComment(#commentId)==authentication.principal.username")
     @DeleteMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable Integer adId, @PathVariable Integer commentId) {
         adsService.deleteComment(adId, commentId);
@@ -225,7 +225,7 @@ public class AdsController {
             @ApiResponse(code = 404, message = "Объявление или комментарий не найдены")
     })
     @PreAuthorize("hasRole('ADMIN') or " +
-            "@adsService.getCommentDto(#adId,#commentId).getAuthor().getEmail()==authentication.principal.username")
+            "@adsServiceImpl.getUserNameOfComment(#commentId)==authentication.principal.username")
     @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable Integer adId,
                                                     @PathVariable Integer commentId,
